@@ -1,0 +1,36 @@
+{
+    "name": "gokure/hyperf-cors",
+    "description": "Adds CORS (Cross-Origin Resource Sharing) headers support in your Hyperf application.",
+    "keywords": ["hyperf", "cors"],
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Gang Wu",
+            "email": "gokure@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">= 7.2",
+        "ext-swoole": ">= 4.4",
+        "hyperf/framework": "^1.0|^2.0",
+        "hyperf/dispatcher": "^1.0|^2.0",
+        "hyperf/di": "^1.0|^2.0",
+        "hyperf/http-server": "^1.0|^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gokure\\HyperfCors\\": "src/"
+        }
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Gokure\\HyperfCors\\ConfigProvider"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
