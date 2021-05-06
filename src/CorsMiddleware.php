@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gokure\HyperfCors;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -68,6 +69,22 @@ class CorsMiddleware implements MiddlewareInterface
     {
         if (!$response->hasHeader('Access-Control-Allow-Origin')) {
             $response = $this->cors->addActualRequestHeaders($response, $request);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Add the headers to the Response, if they don't exist yet.
+     *
+     * @param ResponseInterface $response
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function onRequestHandled(ResponseInterface $response, RequestInterface $request)
+    {
+        if ($this->shouldRun($request)) {
+            $response = $this->addHeaders($request, $response);
         }
 
         return $response;

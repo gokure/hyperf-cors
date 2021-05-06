@@ -24,9 +24,9 @@ class CorsExceptionHandler extends ExceptionHandler
 
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        if (!$response->hasHeader('Access-Control-Allow-Origin')) {
+        if (class_exists(CorsMiddleware::class) && $this->container->has(CorsMiddleware::class)) {
             $request = $this->container->get(RequestInterface::class);
-            return $this->container->get(Cors::class)->addActualRequestHeaders($response, $request);
+            return $this->container->get(CorsMiddleware::class)->onRequestHandled($response, $request);
         }
 
         return $response;
