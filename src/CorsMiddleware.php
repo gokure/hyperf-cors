@@ -110,16 +110,15 @@ class CorsMiddleware implements MiddlewareInterface
     protected function isMatchingPath(ServerRequestInterface $request): bool
     {
         // Get the paths from the config or the middleware
-        $paths = $this->getPathsByHost($request->getUri()->getHost());
+        $uri = $request->getUri();
+        $paths = $this->getPathsByHost($uri->getHost());
 
         foreach ($paths as $path) {
             if ($path !== '/') {
                 $path = trim($path, '/');
             }
 
-            $url = (string)$request->getUri();
-
-            if (Str::is($path, $url) || Str::is($path, rawurldecode($url))) {
+            if (Str::is($path, (string)$uri) || Str::is($path, trim($uri->getPath(), '/'))) {
                 return true;
             }
         }
