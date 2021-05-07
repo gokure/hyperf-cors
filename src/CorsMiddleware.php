@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gokure\HyperfCors;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -74,6 +75,22 @@ class CorsMiddleware implements MiddlewareInterface
     }
 
     /**
+     * Add the headers to the Response, if they don't exist yet.
+     *
+     * @param ResponseInterface $response
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function onRequestHandled(ResponseInterface $response, RequestInterface $request)
+    {
+        if ($this->shouldRun($request)) {
+            $response = $this->addHeaders($request, $response);
+        }
+
+        return $response;
+    }
+
+    /**
      * Determine if the request has a URI that should pass through the CORS flow.
      *
      * @param  ServerRequestInterface  $request
@@ -93,16 +110,15 @@ class CorsMiddleware implements MiddlewareInterface
     protected function isMatchingPath(ServerRequestInterface $request): bool
     {
         // Get the paths from the config or the middleware
-        $paths = $this->getPathsByHost($request->getUri()->getHost());
+        $uri = $request->getUri();
+        $paths = $this->getPathsByHost($uri->getHost());
 
         foreach ($paths as $path) {
             if ($path !== '/') {
                 $path = trim($path, '/');
             }
 
-            $url = (string)$request->getUri();
-
-            if (Str::is($path, $url) || Str::is($path, rawurldecode($url))) {
+            if (Str::is($path, (string)$uri) || Str::is($path, trim($uri->getPath(), '/'))) {
                 return true;
             }
         }

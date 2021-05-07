@@ -215,6 +215,23 @@ class Cors
             'max_age' => 0,
         ];
 
+        if ($options['exposed_headers'] && !is_array($options['exposed_headers'])) {
+            throw new \RuntimeException('CORS config `exposed_headers` should be `false` or an array');
+        }
+
+        foreach (['allowed_origins', 'allowed_origins_patterns',  'allowed_headers', 'allowed_methods'] as $key) {
+            if (!is_array($options[$key])) {
+                throw new \RuntimeException('CORS config `' . $key . '` should be an array');
+            }
+        }
+
+        // Transform wildcard pattern
+        foreach ($options['allowed_origins'] as $origin) {
+            if (strpos($origin, '*') !== false) {
+                $options['allowed_origins_patterns'][] = $origin;
+            }
+        }
+
         // normalize array('*') to true
         if (in_array('*', $options['allowed_origins'], true)) {
             $options['allowed_origins'] = true;
