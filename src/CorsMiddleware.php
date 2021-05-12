@@ -83,6 +83,7 @@ class CorsMiddleware implements MiddlewareInterface
      * @param ResponseInterface $response
      * @param RequestInterface $request
      * @return ResponseInterface
+     * @deprecated remove from 2.0
      */
     public function onRequestHandled(ResponseInterface $response, RequestInterface $request)
     {
