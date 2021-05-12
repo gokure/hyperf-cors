@@ -258,20 +258,20 @@ class GlobalMiddlewareTest extends TestCase
         $this->assertSame(200, $crawler->getStatusCode());
     }
 
-//    public function testError()
-//    {
-//        $container = $this->getContainer();
-//        $client = new Client($container);
-//        $crawler = $client->request('POST', '/api/error', [
-//            'headers' => [
-//                'Origin' => 'http://127.0.0.1',
-//                'Access-Control-Request-Method' => 'POST',
-//            ],
-//        ]);
-//
-//        $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-//        $this->assertSame(500, $crawler->getStatusCode());
-//    }
+   public function testError()
+   {
+       $container = $this->getContainer();
+       $client = new Client($container);
+       $crawler = $client->request('POST', '/api/error', [
+           'headers' => [
+               'Origin' => 'http://127.0.0.1',
+               'Access-Control-Request-Method' => 'POST',
+           ],
+       ]);
+
+       $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+       $this->assertSame(500, $crawler->getStatusCode());
+   }
 
     public function testValidationException()
     {

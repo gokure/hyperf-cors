@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Gokure\HyperfCors;
 
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Str;
+use Hyperf\Utils\Context;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 
 class CorsMiddleware implements MiddlewareInterface
 {
@@ -48,14 +49,16 @@ class CorsMiddleware implements MiddlewareInterface
             return $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
-        // Handle the request
-        $response = $handler->handle($request);
+        $response = Context::get(ResponseInterface::class);
 
         if ($request->getMethod() === 'OPTIONS') {
             $response = $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
-        return $this->addHeaders($request, $response);
+        Context::set(ResponseInterface::class, $this->addHeaders($request, $response));
+
+        // Handle the request
+        return $handler->handle($request);
     }
 
     /**
@@ -80,6 +83,7 @@ class CorsMiddleware implements MiddlewareInterface
      * @param ResponseInterface $response
      * @param RequestInterface $request
      * @return ResponseInterface
+     * @deprecated remove from 2.0
      */
     public function onRequestHandled(ResponseInterface $response, RequestInterface $request)
     {

@@ -10,6 +10,11 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
+/**
+ * Class CorsExceptionHandler
+ * @package Gokure\HyperfCors
+ * @deprecated remove from 2.0
+ */
 class CorsExceptionHandler extends ExceptionHandler
 {
     /**
@@ -34,6 +39,6 @@ class CorsExceptionHandler extends ExceptionHandler
 
     public function isValid(Throwable $throwable): bool
     {
-        return true;
+        return false;
     }
 }
