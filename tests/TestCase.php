@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Gokure\HyperfCors\Tests;
 
 use Gokure\HyperfCors\Cors;
-use Gokure\HyperfCors\CorsExceptionHandler;
 use Gokure\HyperfCors\CorsMiddleware;
 use Gokure\HyperfCors\Tests\Stubs\Exception\Handler\AppExceptionHandler;
 use Hyperf\Config\Config;
@@ -100,7 +99,6 @@ class TestCase extends BaseTestCase
             'exceptions' => [
                 'handler' => [
                     'http' => [
-                        CorsExceptionHandler::class,
                         AppExceptionHandler::class,
                     ],
                 ],
@@ -122,7 +120,6 @@ class TestCase extends BaseTestCase
         $container->shouldReceive('get')->with(Cors::class)->andReturn($cors = new Cors($container));
         $container->shouldReceive('get')->with(CorsMiddleware::class)->andReturn(new CorsMiddleware($cors, $container));
         $container->shouldReceive('get')->with(AppExceptionHandler::class)->andReturn(new AppExceptionHandler());
-        $container->shouldReceive('get')->with(CorsExceptionHandler::class)->andReturn(new CorsExceptionHandler($container));
         $container->shouldReceive('make')->with(CoreMiddleware::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new CoreMiddleware(...array_values($args));
         });

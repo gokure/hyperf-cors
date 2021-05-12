@@ -34,6 +34,6 @@ class CorsExceptionHandler extends ExceptionHandler
 
     public function isValid(Throwable $throwable): bool
     {
-        return true;
+        return false;
     }
 }
