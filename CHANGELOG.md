@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.1.0 (Not Releases Yet)
+## 1.1.0 (2021-05-12)
 
 * The `CorsExceptionHandler` class was deprecated and no more to used in the `exceptions.php` file.
 
