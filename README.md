@@ -10,10 +10,10 @@ Implements [fruitcake/laravel-cors](https://github.com/fruitcake/laravel-cors) f
 
 ## Installation
 
-Require the `gokure/hypref-cors` package in your `composer.json` and update your dependencies:
+Require the `gokure/hyperf-cors` package in your `composer.json` and update your dependencies:
 
 ```sh
-composer require gokure/hypref-cors
+composer require gokure/hyperf-cors
 ```
 
 ## Global usage
@@ -45,7 +45,7 @@ To allow CORS for all your routes, add the `CorsMiddleware` middleware at the to
 The defaults are set in `config/autoload/cors.php`. Publish the config to copy the file to your own config:
 
 ```sh
-php bin/hyperf.php vendor:publish gokure/hypref-cors
+php bin/hyperf.php vendor:publish gokure/hyperf-cors
 ```
 
 > **Note:** When using custom headers, like `X-Auth-Token` or `X-Requested-With`, you must set the `allowed_headers` to include those headers. You can also set it to `['*']` to allow all custom headers.
