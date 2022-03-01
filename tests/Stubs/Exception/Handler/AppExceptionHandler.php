@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Gokure\HyperfCors\Tests\Stubs\Exception\Handler;
 
-
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Validation\ValidationException;

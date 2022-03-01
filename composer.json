@@ -17,10 +17,12 @@
         "hyperf/http-server": "^1.0|^2.0"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.6",
         "hyperf/config": "^1.0|^2.0",
         "hyperf/testing": "^1.0|^2.0",
         "hyperf/validation": "^1.0|^2.0",
-        "mockery/mockery": "^1.0"
+        "mockery/mockery": "^1.0",
+        "phpstan/phpstan": "^1.4"
     },
     "autoload": {
         "psr-4": {
@@ -44,5 +46,9 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "test": "./vendor/bin/co-phpunit --colors=always",
+        "cs-fix": "./vendor/bin/php-cs-fixer fix $1"
+    }
 }
