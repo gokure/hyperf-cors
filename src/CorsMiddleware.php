@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Gokure\HyperfCors;
 
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Context;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,10 +25,18 @@ class CorsMiddleware implements MiddlewareInterface
      */
     protected $container;
 
+    /**
+     * @var \Hyperf\Context\Context|\Hyperf\Utils\Context|string
+     */
+    protected $context;
+
     public function __construct(Cors $cors, ContainerInterface $container)
     {
         $this->cors = $cors;
         $this->container = $container;
+        $this->context = class_exists(\Hyperf\Context\Context::class)
+            ? \Hyperf\Context\Context::class
+            : \Hyperf\Utils\Context::class;
     }
 
     /**
@@ -49,13 +56,13 @@ class CorsMiddleware implements MiddlewareInterface
             return $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
-        $response = Context::get(ResponseInterface::class);
+        $response = $this->context::get(ResponseInterface::class);
 
         if ($request->getMethod() === 'OPTIONS') {
             $response = $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
-        Context::set(ResponseInterface::class, $this->addHeaders($request, $response));
+        $this->context::set(ResponseInterface::class, $this->addHeaders($request, $response));
 
         // Handle the request
         return $handler->handle($request);
@@ -141,7 +148,7 @@ class CorsMiddleware implements MiddlewareInterface
         $paths = $this->container->get(ConfigInterface::class)->get('cors.paths', []);
         // If where are paths by given host
         return $paths[$host] ?? array_filter($paths, function ($path) {
-                return is_string($path);
-            });
+            return is_string($path);
+        });
     }
 }
