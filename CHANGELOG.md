@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.1.1 (2022-03-01)
+
+* Eager to compatible Hyperf 3.0
+* Fix typo.
+
 ## 1.1.0 (2021-05-12)
 
 * The `CorsExceptionHandler` class was deprecated and no more to used in the `exceptions.php` file.
