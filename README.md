@@ -32,19 +32,6 @@ To allow CORS for all your routes, add the `CorsMiddleware` middleware at the to
 ],
 ```
 
-~~Also, to allow CORS for exception responses, you need add the `CorsExceptionHandler` handler at the top of the property of `config/autoload/exceptions.php` file:~~
-
-```php
-'handler' => [
-    'http' => [
-        Gokure\HyperfCors\CorsExceptionHandler::class,
-        ...
-    ],
-],
-```
-
-> **Note:** Since the version `1.1.0`, `CorsExceptionHandler` has been deprecated, and it will be removed since 2.0, you can move it out safely from `exceptions.php` file.
-
 ## Configuration
 
 The defaults are set in `config/autoload/cors.php`. Publish the config to copy the file to your own config:
