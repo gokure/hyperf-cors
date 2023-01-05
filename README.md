@@ -1,6 +1,6 @@
 # CORS Middleware for Hyperf
 
-[![Build Status](https://github.com/gokure/hyperf-cors/actions/workflows/run-tests.yml/badge.svg)](https://github.com/gokure/hyperf-cors/actions)
+[![Build Status](https://github.com/gokure/hyperf-cors/actions/workflows/tests.yml/badge.svg)](https://github.com/gokure/hyperf-cors/actions)
 [![Latest Stable Version](https://img.shields.io/packagist/v/gokure/hyperf-cors.svg)](https://packagist.org/packages/gokure/hyperf-cors)
 [![Total Downloads](https://img.shields.io/packagist/dt/gokure/hyperf-cors.svg)](https://packagist.org/packages/gokure/hyperf-cors)
 [![GitHub license](https://img.shields.io/github/license/gokure/hyperf-cors)](LICENSE)
