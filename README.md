@@ -1,5 +1,10 @@
 # CORS Middleware for Hyperf
 
+[![Build Status](https://github.com/gokure/hyperf-cors/actions/workflows/run-tests.yml/badge.svg)](https://github.com/gokure/hyperf-cors/actions)
+[![Latest Stable Version](https://img.shields.io/packagist/v/gokure/hyperf-cors.svg)](https://packagist.org/packages/gokure/hyperf-cors)
+[![Total Downloads](https://img.shields.io/packagist/dt/gokure/hyperf-cors.svg)](https://packagist.org/packages/gokure/hyperf-cors)
+[![GitHub license](https://img.shields.io/github/license/gokure/hyperf-cors)](LICENSE)
+
 Implements [fruitcake/laravel-cors](https://github.com/fruitcake/laravel-cors) for Hyperf.
 
 ## Features
@@ -54,20 +59,20 @@ php bin/hyperf.php vendor:publish gokure/hyperf-cors
 
 ### Options
 
-| Option                   | Description                                                              | Default value |
-|--------------------------|--------------------------------------------------------------------------|---------------|
-| paths                    | You can enable CORS for 1 or multiple paths, eg. `['api/*'] `            | `[]`          |
-| allowed_origins          | Matches the request origin. Wildcards can be used, eg. `*.mydomain.com` or `mydomain.com:*`  | `['*']`       |
-| allowed_origins_patterns | Matches the request origin with `preg_match`.                            | `[]`          |
-| allowed_methods          | Matches the request method.                                              | `['*']`       |
-| allowed_headers          | Sets the Access-Control-Allow-Headers response header.                   | `['*']`       |
-| exposed_headers          | Sets the Access-Control-Expose-Headers response header.                  | `false`       |
-| max_age                  | Sets the Access-Control-Max-Age response header.                         | `0`           |
-| supports_credentials     | Sets the Access-Control-Allow-Credentials header.                        | `false`       |
+| Option                   | Description                                                                                 | Default value |
+| ------------------------ | ------------------------------------------------------------------------------------------- | ------------- |
+| paths                    | You can enable CORS for 1 or multiple paths, eg. `['api/*'] `                               | `[]`          |
+| allowed_origins          | Matches the request origin. Wildcards can be used, eg. `*.mydomain.com` or `mydomain.com:*` | `['*']`       |
+| allowed_origins_patterns | Matches the request origin with `preg_match`.                                               | `[]`          |
+| allowed_methods          | Matches the request method.                                                                 | `['*']`       |
+| allowed_headers          | Sets the Access-Control-Allow-Headers response header.                                      | `['*']`       |
+| exposed_headers          | Sets the Access-Control-Expose-Headers response header.                                     | `false`       |
+| max_age                  | Sets the Access-Control-Max-Age response header.                                            | `0`           |
+| supports_credentials     | Sets the Access-Control-Allow-Credentials header.                                           | `false`       |
 
 `allowed_origins`, `allowed_headers` and `allowed_methods` can be set to `['*']` to accept any value.
 
-> **Note:** For `allowed_origins` you must include the scheme when not using a wildcard, eg. `['http://example.com', 'https://example.com']`. You must also take into account that the scheme will be present when using `allowed_origins_patterns`.
+> **Note:** For `allowed_origins` you must include the scheme when not using a wildcard, e.g. `['http://example.com', 'https://example.com']`. You must also take into account that the scheme will be present when using `allowed_origins_patterns`.
 
 ## License
 
