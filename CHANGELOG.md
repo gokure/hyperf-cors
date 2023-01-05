@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+
+## 2.0.0 (2022-01-05)
+
+* Support Hyperf 3.0 and to freeze minimum version to 2.2.
+* Add Github actions.
+
 ## 1.1.1 (2022-03-01)
 
 * Eager to compatible Hyperf 3.0

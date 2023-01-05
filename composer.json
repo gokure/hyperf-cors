@@ -11,17 +11,17 @@
         }
     ],
     "require": {
-        "php": ">= 7.2",
-        "ext-swoole": ">= 4.4",
-        "hyperf/di": "^1.0|^2.0",
-        "hyperf/http-server": "^1.0|^2.0"
+        "php": ">= 7.3",
+        "ext-swoole": ">= 4.5",
+        "hyperf/di": "^2.2|^3.0",
+        "hyperf/http-server": "^2.2|^3.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.6",
-        "hyperf/config": "^1.0|^2.0",
-        "hyperf/testing": "^1.0|^2.0",
-        "hyperf/validation": "^1.0|^2.0",
-        "mockery/mockery": "^1.0",
+        "hyperf/config": "^2.2|^3.0",
+        "hyperf/testing": "^2.2|^3.0",
+        "hyperf/validation": "^2.2|^3.0",
+        "mockery/mockery": "^1.4",
         "phpstan/phpstan": "^1.4"
     },
     "autoload": {
@@ -39,7 +39,7 @@
             "config": "Gokure\\HyperfCors\\ConfigProvider"
         },
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.x-dev"
         }
     },
     "config": {
