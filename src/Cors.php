@@ -6,7 +6,6 @@ namespace Gokure\HyperfCors;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
-use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -90,7 +89,11 @@ class Cors
             return true;
         }
 
-        if (Str::is($this->options['allowed_origins_patterns'], $origin)) {
+        $str = class_exists(\Hyperf\Stringable\Str::class)
+            ? \Hyperf\Stringable\Str::class
+            : \Hyperf\Utils\Str::class;
+
+        if ($str::is($this->options['allowed_origins_patterns'], $origin)) {
             return true;
         }
 
