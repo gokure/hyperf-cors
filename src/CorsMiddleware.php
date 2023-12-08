@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Gokure\HyperfCors;
 
-use Hyperf\Utils\Str;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -129,7 +128,11 @@ class CorsMiddleware implements MiddlewareInterface
                 $path = trim($path, '/');
             }
 
-            if (Str::is($path, (string)$uri) || Str::is($path, trim($uri->getPath(), '/'))) {
+            $str = class_exists(\Hyperf\Stringable\Str::class)
+                ? \Hyperf\Stringable\Str::class
+                : \Hyperf\Utils\Str::class;
+
+            if ($str::is($path, (string)$uri) || $str::is($path, trim($uri->getPath(), '/'))) {
                 return true;
             }
         }
