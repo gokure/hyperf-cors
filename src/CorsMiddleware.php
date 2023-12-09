@@ -123,14 +123,14 @@ class CorsMiddleware implements MiddlewareInterface
         $uri = $request->getUri();
         $paths = $this->getPathsByHost($uri->getHost());
 
+        $str = class_exists(\Hyperf\Stringable\Str::class)
+            ? \Hyperf\Stringable\Str::class
+            : \Hyperf\Utils\Str::class;
+
         foreach ($paths as $path) {
             if ($path !== '/') {
                 $path = trim($path, '/');
             }
-
-            $str = class_exists(\Hyperf\Stringable\Str::class)
-                ? \Hyperf\Stringable\Str::class
-                : \Hyperf\Utils\Str::class;
 
             if ($str::is($path, (string)$uri) || $str::is($path, trim($uri->getPath(), '/'))) {
                 return true;
