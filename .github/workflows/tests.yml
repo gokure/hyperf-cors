@@ -15,14 +15,14 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php: [ '8.2', '8.1', '8.0', '7.4' ]
-        hyperf: [ '^2.2', '^3.0' ]
+        php: [ '8.3', '8.2', '8.1', '8.0' ]
+        hyperf: [ '~3.0.0', '~3.1.0' ]
         dependency-version: [prefer-lowest, prefer-stable]
         exclude:
-          - hyperf: '^2.2'
-            php: '8.2'
-          - hyperf: '^3.0'
-            php: '7.4'
+          - hyperf: '~3.1.0'
+            php: '8.0'
+          - hyperf: '~3.0.0'
+            php: '8.3'
       max-parallel: 12
       fail-fast: false
 
@@ -36,7 +36,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: swoole-4.7.1
+          extensions: swoole-5.0.2
           ini-values: swoole.use_shortname=Off
           tools: composer:v2
 
