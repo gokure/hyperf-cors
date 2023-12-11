@@ -42,12 +42,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "hyperf/di:${{ matrix.hyperf }}"
-          composer require "hyperf/http-server:${{ matrix.hyperf }}"
-          composer require "hyperf/config:${{ matrix.hyperf }}" --dev
-          composer require "hyperf/testing:${{ matrix.hyperf }}" --dev
-          composer require "hyperf/validation:${{ matrix.hyperf }}" --dev
-          composer update --${{ matrix.dependency-version }} --no-progress
+          composer require "hyperf/di:${{ matrix.hyperf }}" --no-interaction --no-update
+          composer require "hyperf/http-server:${{ matrix.hyperf }}" --no-interaction --no-update
+          composer require "hyperf/config:${{ matrix.hyperf }}" --dev --no-interaction --no-update
+          composer require "hyperf/testing:${{ matrix.hyperf }}" --dev --no-interaction --no-update
+          composer require "hyperf/validation:${{ matrix.hyperf }}" --dev --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress
 
       - name: Run Test Cases
         run: composer test
