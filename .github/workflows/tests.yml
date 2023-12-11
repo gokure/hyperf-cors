@@ -47,7 +47,7 @@ jobs:
           composer require "hyperf/config:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/testing:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/validation:${{ matrix.hyperf }}" --dev --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress
+          composer update --prefer-dist --no-progress
 
       - name: Run Test Cases
         run: composer test
