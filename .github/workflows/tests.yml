@@ -30,13 +30,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: swoole-5.0.2
+          extensions: swoole-5.1.1
           ini-values: swoole.use_shortname=Off
           tools: composer:v2
 
@@ -47,7 +47,7 @@ jobs:
           composer require "hyperf/config:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/testing:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/validation:${{ matrix.hyperf }}" --dev --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress --with=swow/psr7-plus:~1.1.2
 
       - name: Run Test Cases
         run: composer test
