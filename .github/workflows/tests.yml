@@ -50,4 +50,7 @@ jobs:
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress --with=swow/psr7-plus:~1.1.2
 
       - name: Run Test Cases
-        run: composer test
+        run: |
+          pwd
+          ls -l tests/Cases/GlobalMiddlewareTest.php
+          composer test
