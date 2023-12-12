@@ -47,7 +47,7 @@ jobs:
           composer require "hyperf/config:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/testing:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/validation:${{ matrix.hyperf }}" --dev --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress --with=swow/psr7-plus:~1.1.2
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress --with=swow/psr7-plus:~1.1.2 --with=phpunit/phpunit:~10.5.0
 
       - name: Run Test Cases
         run: |
