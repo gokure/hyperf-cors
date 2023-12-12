@@ -60,8 +60,4 @@ jobs:
           composer update swow/psr7-plus:~1.1.2
 
       - name: Run Test Cases
-        run: |
-          pwd
-          ls -l tests/Cases/GlobalMiddlewareTest.php
-          php --ri swoole
-          composer test
+        run: composer test
