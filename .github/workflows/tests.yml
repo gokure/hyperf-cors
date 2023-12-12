@@ -47,7 +47,10 @@ jobs:
           composer require "hyperf/config:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/testing:${{ matrix.hyperf }}" --dev --no-interaction --no-update
           composer require "hyperf/validation:${{ matrix.hyperf }}" --dev --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress --with=swow/psr7-plus:~1.1.2 --with=phpunit/phpunit:~10.0.10
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress --with=swow/psr7-plus:~1.1.2
+          if [ "${{ matrix.php }}" == "8.3"]; then
+            composer update phpunit/phpunit:~10.0.10
+          fi
 
       - name: Run Test Cases
         run: |
