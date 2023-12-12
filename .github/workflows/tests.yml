@@ -53,5 +53,5 @@ jobs:
         run: |
           pwd
           ls -l tests/Cases/GlobalMiddlewareTest.php
-          php -r "clearstatcache(true);"
+          php --ri swoole
           composer test
