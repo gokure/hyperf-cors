@@ -1,42 +1,33 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of gokure/hyperf-cors.
+ *
+ * @link     https://github.com/gokure/hyperf-cors
+ * @document https://github.com/gokure/hyperf-cors/blob/main/README.md
+ * @contact  gokure@gmail.com
+ * @license  https://github.com/hyperf/hyperf-cors/blob/main/LICENSE
+ */
 
 namespace Gokure\HyperfCors;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class Cors
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected array $options;
 
-    /**
-     * @var ServerRequestInterface
-     */
-    protected $request;
-
-    /**
-     * @var array
-     */
-    protected $options;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
-        $options = $this->container->get(ConfigInterface::class)->get('cors', []);
+        $options = $container->get(ConfigInterface::class)->get('cors', []);
         $this->options = $this->normalizeOptions($options);
-    }
-
-    public function setRequest(ServerRequestInterface $request): void
-    {
-        $this->request = $request;
     }
 
     public function isCorsRequest(ServerRequestInterface $request): bool
@@ -79,21 +70,17 @@ class Cors
             return true;
         }
 
-        if (!$request->hasHeader('Origin')) {
+        if (! $request->hasHeader('Origin')) {
             return false;
         }
 
         $origin = $request->getHeaderLine('Origin');
 
-        if (in_array($origin, $this->options['allowed_origins'], true)) {
+        if (\in_array($origin, $this->options['allowed_origins'], true)) {
             return true;
         }
 
-        $str = class_exists(\Hyperf\Stringable\Str::class)
-            ? \Hyperf\Stringable\Str::class
-            : \Hyperf\Utils\Str::class;
-
-        if ($str::is($this->options['allowed_origins_patterns'], $origin)) {
+        if (Str::is($this->options['allowed_origins_patterns'], $origin)) {
             return true;
         }
 
@@ -115,11 +102,11 @@ class Cors
 
     public function varyHeader(ResponseInterface $response, $header): ResponseInterface
     {
-        if (!$response->hasHeader('Vary')) {
+        if (! $response->hasHeader('Vary')) {
             return $response->withHeader('Vary', $header);
         }
 
-        if (!in_array($header, explode(', ', $response->getHeaderLine('Vary')), true)) {
+        if (! \in_array($header, \explode(', ', $response->getHeaderLine('Vary')), true)) {
             return $response->withHeader('Vary', $response->getHeaderLine('Vary') . ', ' . $header);
         }
 
@@ -128,7 +115,7 @@ class Cors
 
     private function configureAllowedOrigin(ResponseInterface $response, ServerRequestInterface $request): ResponseInterface
     {
-        if ($this->options['allowed_origins'] === true && !$this->options['supports_credentials']) {
+        if ($this->options['allowed_origins'] === true && ! $this->options['supports_credentials']) {
             // Safe+cacheable, allow everything
             return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
@@ -148,11 +135,11 @@ class Cors
 
     private function isSingleOriginAllowed(): bool
     {
-        if ($this->options['allowed_origins'] === true || !empty($this->options['allowed_origins_patterns'])) {
+        if ($this->options['allowed_origins'] === true || ! empty($this->options['allowed_origins_patterns'])) {
             return false;
         }
 
-        return count($this->options['allowed_origins']) === 1;
+        return \count($this->options['allowed_origins']) === 1;
     }
 
     private function configureAllowedMethods(ResponseInterface $response, ServerRequestInterface $request): ResponseInterface
@@ -161,7 +148,7 @@ class Cors
             $allowMethods = strtoupper($request->getHeaderLine('Access-Control-Request-Method'));
             $response = $this->varyHeader($response, 'Access-Control-Request-Method');
         } else {
-            $allowMethods = implode(', ', $this->options['allowed_methods']);
+            $allowMethods = \implode(', ', $this->options['allowed_methods']);
         }
 
         return $response->withHeader('Access-Control-Allow-Methods', $allowMethods);
@@ -173,7 +160,7 @@ class Cors
             $allowHeaders = $request->getHeaderLine('Access-Control-Request-Headers');
             $response = $this->varyHeader($response, 'Access-Control-Request-Headers');
         } else {
-            $allowHeaders = implode(', ', $this->options['allowed_headers']);
+            $allowHeaders = \implode(', ', $this->options['allowed_headers']);
         }
 
         return $response->withHeader('Access-Control-Allow-Headers', $allowHeaders);
@@ -191,7 +178,7 @@ class Cors
     private function configureExposedHeaders(ResponseInterface $response, ServerRequestInterface $request): ResponseInterface
     {
         if ($this->options['exposed_headers']) {
-            return $response->withHeader('Access-Control-Expose-Headers', implode(', ', $this->options['exposed_headers']));
+            return $response->withHeader('Access-Control-Expose-Headers', \implode(', ', $this->options['exposed_headers']));
         }
 
         return $response;
@@ -218,37 +205,37 @@ class Cors
             'max_age' => 0,
         ];
 
-        if ($options['exposed_headers'] && !is_array($options['exposed_headers'])) {
-            throw new \RuntimeException('CORS config `exposed_headers` should be `false` or an array');
+        if ($options['exposed_headers'] && ! \is_array($options['exposed_headers'])) {
+            throw new RuntimeException('CORS config `exposed_headers` should be `false` or an array');
         }
 
-        foreach (['allowed_origins', 'allowed_origins_patterns',  'allowed_headers', 'allowed_methods'] as $key) {
-            if (!is_array($options[$key])) {
-                throw new \RuntimeException('CORS config `' . $key . '` should be an array');
+        foreach (['allowed_origins', 'allowed_origins_patterns', 'allowed_headers', 'allowed_methods'] as $key) {
+            if (! \is_array($options[$key])) {
+                throw new RuntimeException('CORS config `' . $key . '` should be an array');
             }
         }
 
         // Transform wildcard pattern
         foreach ($options['allowed_origins'] as $origin) {
-            if (strpos($origin, '*') !== false) {
+            if (str_contains($origin, '*')) {
                 $options['allowed_origins_patterns'][] = $origin;
             }
         }
 
         // normalize array('*') to true
-        if (in_array('*', $options['allowed_origins'], true)) {
+        if (\in_array('*', $options['allowed_origins'], true)) {
             $options['allowed_origins'] = true;
         }
-        if (in_array('*', $options['allowed_headers'], true)) {
+        if (\in_array('*', $options['allowed_headers'], true)) {
             $options['allowed_headers'] = true;
         } else {
-            $options['allowed_headers'] = array_map('strtolower', $options['allowed_headers']);
+            $options['allowed_headers'] = \array_map('strtolower', $options['allowed_headers']);
         }
 
-        if (in_array('*', $options['allowed_methods'], true)) {
+        if (\in_array('*', $options['allowed_methods'], true)) {
             $options['allowed_methods'] = true;
         } else {
-            $options['allowed_methods'] = array_map('strtoupper', $options['allowed_methods']);
+            $options['allowed_methods'] = \array_map('strtoupper', $options['allowed_methods']);
         }
 
         return $options;

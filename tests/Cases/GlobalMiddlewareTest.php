@@ -1,12 +1,26 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of gokure/hyperf-cors.
+ *
+ * @link     https://github.com/gokure/hyperf-cors
+ * @document https://github.com/gokure/hyperf-cors/blob/main/README.md
+ * @contact  gokure@gmail.com
+ * @license  https://github.com/hyperf/hyperf-cors/blob/main/LICENSE
+ */
 
 namespace Gokure\HyperfCors\Tests\Cases;
 
 use Gokure\HyperfCors\Tests\TestCase;
 use Hyperf\Testing\Client;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use RuntimeException;
 
+/**
+ * @internal
+ */
+#[CoversNothing]
 class GlobalMiddlewareTest extends TestCase
 {
     public function testShouldReturnHeaderAssessControlAllowOriginWhenDontHaveHttpOriginOnRequest()
@@ -19,8 +33,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(204, $crawler->getStatusCode());
     }
 
     public function testOptionsAllowOriginAllowed()
@@ -34,8 +48,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(204, $crawler->getStatusCode());
     }
 
     public function testAllowAllOrigins()
@@ -49,8 +63,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('*', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('*', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(204, $crawler->getStatusCode());
     }
 
     public function testAllowAllOriginsWildcard()
@@ -64,8 +78,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('http://test.hyperf.io', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('http://test.hyperf.io', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(204, $crawler->getStatusCode());
     }
 
     public function testOriginsWildcardIncludesNestedSubdomains()
@@ -79,8 +93,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('http://api.service.test.hyperf.io', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('http://api.service.test.hyperf.io', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(204, $crawler->getStatusCode());
     }
 
     public function testAllowAllOriginsWildcardNoMatch()
@@ -94,7 +108,7 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertEmpty($crawler->getHeader('Access-Control-Allow-Origin'));
+        self::assertEmpty($crawler->getHeader('Access-Control-Allow-Origin'));
     }
 
     public function testOptionsAllowOriginAllowedNonExistingRoute()
@@ -108,8 +122,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(204, $crawler->getStatusCode());
     }
 
     public function testOptionsAllowOriginNotAllowed()
@@ -123,7 +137,7 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
     }
 
     public function testAllowMethodAllowed()
@@ -137,10 +151,10 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertEmpty($crawler->getHeader('Access-Control-Allow-Methods'));
-        $this->assertSame(200, $crawler->getStatusCode());
+        self::assertEmpty($crawler->getHeader('Access-Control-Allow-Methods'));
+        self::assertSame(200, $crawler->getStatusCode());
 
-        $this->assertSame('PONG', (string)$crawler->getBody());
+        self::assertSame('PONG', (string) $crawler->getBody());
     }
 
     public function testAllowMethodNotAllowed()
@@ -154,8 +168,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertEmpty($crawler->getHeader('Access-Control-Allow-Methods'));
-        $this->assertSame(200, $crawler->getStatusCode());
+        self::assertEmpty($crawler->getHeader('Access-Control-Allow-Methods'));
+        self::assertSame(200, $crawler->getStatusCode());
     }
 
     public function testAllowHeaderAllowedOptions()
@@ -170,10 +184,10 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('x-custom-1, x-custom-2', $crawler->getHeaderLine('Access-Control-Allow-Headers'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('x-custom-1, x-custom-2', $crawler->getHeaderLine('Access-Control-Allow-Headers'));
+        self::assertSame(204, $crawler->getStatusCode());
 
-        $this->assertSame('', (string)$crawler->getBody());
+        self::assertSame('', (string) $crawler->getBody());
     }
 
     public function testAllowHeaderAllowedWildcardOptions()
@@ -188,10 +202,10 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('x-custom-3', $crawler->getHeaderLine('Access-Control-Allow-Headers'));
-        $this->assertSame(204, $crawler->getStatusCode());
+        self::assertSame('x-custom-3', $crawler->getHeaderLine('Access-Control-Allow-Headers'));
+        self::assertSame(204, $crawler->getStatusCode());
 
-        $this->assertSame('', (string)$crawler->getBody());
+        self::assertSame('', (string) $crawler->getBody());
     }
 
     public function testAllowHeaderNotAllowedOptions()
@@ -206,7 +220,7 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('x-custom-1, x-custom-2', $crawler->getHeaderLine('Access-Control-Allow-Headers'));
+        self::assertSame('x-custom-1, x-custom-2', $crawler->getHeaderLine('Access-Control-Allow-Headers'));
     }
 
     public function testAllowHeaderAllowed()
@@ -220,10 +234,10 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertEmpty($crawler->getHeader('Access-Control-Allow-Headers'));
-        $this->assertSame(200, $crawler->getStatusCode());
+        self::assertEmpty($crawler->getHeader('Access-Control-Allow-Headers'));
+        self::assertSame(200, $crawler->getStatusCode());
 
-        $this->assertSame('PONG', (string)$crawler->getBody());
+        self::assertSame('PONG', (string) $crawler->getBody());
     }
 
     public function testAllowHeaderAllowedWildcard()
@@ -237,10 +251,10 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertEmpty($crawler->getHeader('Access-Control-Allow-Headers'));
-        $this->assertSame(200, $crawler->getStatusCode());
+        self::assertEmpty($crawler->getHeader('Access-Control-Allow-Headers'));
+        self::assertSame(200, $crawler->getStatusCode());
 
-        $this->assertSame('PONG', (string)$crawler->getBody());
+        self::assertSame('PONG', (string) $crawler->getBody());
     }
 
     public function testAllowHeaderNotAllowed()
@@ -254,8 +268,8 @@ class GlobalMiddlewareTest extends TestCase
             ],
         ]);
 
-        $this->assertEmpty($crawler->getHeader('Access-Control-Allow-Headers'));
-        $this->assertSame(200, $crawler->getStatusCode());
+        self::assertEmpty($crawler->getHeader('Access-Control-Allow-Headers'));
+        self::assertSame(200, $crawler->getStatusCode());
     }
 
     public function testError()
@@ -263,14 +277,14 @@ class GlobalMiddlewareTest extends TestCase
         $container = $this->getContainer();
         $client = new Client($container);
         $crawler = $client->request('POST', '/api/error', [
-           'headers' => [
-               'Origin' => 'http://127.0.0.1',
-               'Access-Control-Request-Method' => 'POST',
-           ],
-       ]);
+            'headers' => [
+                'Origin' => 'http://127.0.0.1',
+                'Access-Control-Request-Method' => 'POST',
+            ],
+        ]);
 
-        $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(500, $crawler->getStatusCode());
+        self::assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(500, $crawler->getStatusCode());
     }
 
     public function testValidationException()
@@ -285,13 +299,13 @@ class GlobalMiddlewareTest extends TestCase
             'form_params' => [],
         ]);
 
-        $this->assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
-        $this->assertSame(422, $crawler->getStatusCode());
+        self::assertSame('http://127.0.0.1', $crawler->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertSame(422, $crawler->getStatusCode());
     }
 
     public function testInvalidExposedHeadersException()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $container = $this->getContainer(['exposed_headers' => true]);
         $client = new Client($container);
@@ -304,7 +318,7 @@ class GlobalMiddlewareTest extends TestCase
 
     public function testInvalidOriginsException()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $container = $this->getContainer(['allowed_origins' => true]);
         $client = new Client($container);
