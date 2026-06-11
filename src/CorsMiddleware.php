@@ -1,46 +1,32 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of gokure/hyperf-cors.
+ *
+ * @link     https://github.com/gokure/hyperf-cors
+ * @document https://github.com/gokure/hyperf-cors/blob/main/README.md
+ * @contact  gokure@gmail.com
+ * @license  https://github.com/hyperf/hyperf-cors/blob/main/LICENSE
+ */
 
 namespace Gokure\HyperfCors;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
 class CorsMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var Cors
-     */
-    protected $cors;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var \Hyperf\Context\Context|\Hyperf\Utils\Context|string
-     */
-    protected $context;
-
-    public function __construct(Cors $cors, ContainerInterface $container)
+    public function __construct(protected Cors $cors, protected ContainerInterface $container)
     {
-        $this->cors = $cors;
-        $this->container = $container;
-        $this->context = class_exists(\Hyperf\Context\Context::class)
-            ? \Hyperf\Context\Context::class
-            : \Hyperf\Utils\Context::class;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // Check if we're dealing with CORS and if we should handle it
@@ -55,13 +41,13 @@ class CorsMiddleware implements MiddlewareInterface
             return $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
-        $response = $this->context::get(ResponseInterface::class);
+        $response = Context::get(ResponseInterface::class);
 
         if ($request->getMethod() === 'OPTIONS') {
             $response = $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
-        $this->context::set(ResponseInterface::class, $this->addHeaders($request, $response));
+        Context::set(ResponseInterface::class, $this->addHeaders($request, $response));
 
         // Handle the request
         return $handler->handle($request);
@@ -69,14 +55,10 @@ class CorsMiddleware implements MiddlewareInterface
 
     /**
      * Add the headers to the Response, if they don't exist yet.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
      */
     public function addHeaders(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        if (!$response->hasHeader('Access-Control-Allow-Origin')) {
+        if (! $response->hasHeader('Access-Control-Allow-Origin')) {
             $response = $this->cors->addActualRequestHeaders($response, $request);
         }
 
@@ -84,27 +66,7 @@ class CorsMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Add the headers to the Response, if they don't exist yet.
-     *
-     * @param ResponseInterface $response
-     * @param RequestInterface $request
-     * @return ResponseInterface
-     * @deprecated remove from 2.0
-     */
-    public function onRequestHandled(ResponseInterface $response, RequestInterface $request)
-    {
-        if ($this->shouldRun($request)) {
-            $response = $this->addHeaders($request, $response);
-        }
-
-        return $response;
-    }
-
-    /**
      * Determine if the request has a URI that should pass through the CORS flow.
-     *
-     * @param  ServerRequestInterface  $request
-     * @return bool
      */
     protected function shouldRun(ServerRequestInterface $request): bool
     {
@@ -112,10 +74,7 @@ class CorsMiddleware implements MiddlewareInterface
     }
 
     /**
-     * The the path from the config, to see if the CORS Service should run
-     *
-     * @param ServerRequestInterface $request
-     * @return bool
+     * The the path from the config, to see if the CORS Service should run.
      */
     protected function isMatchingPath(ServerRequestInterface $request): bool
     {
@@ -123,16 +82,12 @@ class CorsMiddleware implements MiddlewareInterface
         $uri = $request->getUri();
         $paths = $this->getPathsByHost($uri->getHost());
 
-        $str = class_exists(\Hyperf\Stringable\Str::class)
-            ? \Hyperf\Stringable\Str::class
-            : \Hyperf\Utils\Str::class;
-
         foreach ($paths as $path) {
             if ($path !== '/') {
-                $path = trim($path, '/');
+                $path = \trim($path, '/');
             }
 
-            if ($str::is($path, (string)$uri) || $str::is($path, trim($uri->getPath(), '/'))) {
+            if (Str::is($path, (string) $uri) || Str::is($path, \trim($uri->getPath(), '/'))) {
                 return true;
             }
         }
@@ -141,17 +96,13 @@ class CorsMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Paths by given host or string values in config by default
-     *
-     * @param string $host
-     * @return array
+     * Paths by given host or string values in config by default.
      */
-    protected function getPathsByHost(string $host)
+    protected function getPathsByHost(string $host): array
     {
         $paths = $this->container->get(ConfigInterface::class)->get('cors.paths', []);
+
         // If where are paths by given host
-        return $paths[$host] ?? array_filter($paths, function ($path) {
-            return is_string($path);
-        });
+        return $paths[$host] ?? \array_filter($paths, static fn ($path) => \is_string($path));
     }
 }

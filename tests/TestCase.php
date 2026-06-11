@@ -1,6 +1,14 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of gokure/hyperf-cors.
+ *
+ * @link     https://github.com/gokure/hyperf-cors
+ * @document https://github.com/gokure/hyperf-cors/blob/main/README.md
+ * @contact  gokure@gmail.com
+ * @license  https://github.com/hyperf/hyperf-cors/blob/main/LICENSE
+ */
 
 namespace Gokure\HyperfCors\Tests;
 
@@ -8,10 +16,12 @@ use Gokure\HyperfCors\Cors;
 use Gokure\HyperfCors\CorsMiddleware;
 use Gokure\HyperfCors\Tests\Stubs\Exception\Handler\AppExceptionHandler;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
@@ -26,15 +36,23 @@ use Hyperf\HttpServer\Request;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Router;
+use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Server\ServerFactory;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\ValidatorFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 
+/**
+ * @internal
+ */
+#[CoversNothing]
 class TestCase extends BaseTestCase
 {
     protected function tearDown(): void
@@ -44,30 +62,27 @@ class TestCase extends BaseTestCase
 
     protected function addWebRoutes()
     {
-        Router::post('/web/ping', function () {
+        Router::post('/web/ping', static function () {
             return 'PONG';
         });
     }
 
     protected function addApiRoutes()
     {
-        Router::post('/api/ping', function () {
+        Router::post('/api/ping', static function () {
             return 'PONG';
         });
 
-        Router::put('/api/ping', function () {
+        Router::put('/api/ping', static function () {
             return 'PONG';
         });
 
-        Router::post('/api/error', function () {
-            throw new \RuntimeException('Server Error', 500);
+        Router::post('/api/error', static function () {
+            throw new RuntimeException('Server Error', 500);
         });
 
-        Router::post('/api/validation', function () {
-            $ApplicationContext = class_exists(\Hyperf\Context\ApplicationContext::class)
-                ? \Hyperf\Context\ApplicationContext::class
-                : \Hyperf\Utils\ApplicationContext::class;
-            $ApplicationContext::getContainer()->get(ValidatorFactoryInterface::class)->validate([], [
+        Router::post('/api/validation', static function () {
+            ApplicationContext::getContainer()->get(ValidatorFactoryInterface::class)->validate([], [
                 'name' => 'required',
             ]);
 
@@ -87,26 +102,13 @@ class TestCase extends BaseTestCase
             'max_age' => 0,
         ], $config);
 
-        $SimpleNormalizer = class_exists(\Hyperf\Serializer\SimpleNormalizer::class)
-            ? \Hyperf\Serializer\SimpleNormalizer::class
-            : \Hyperf\Utils\Serializer\SimpleNormalizer::class;
-        $Filesystem = class_exists(\Hyperf\Support\Filesystem\Filesystem::class)
-            ? \Hyperf\Support\Filesystem\Filesystem::class
-            : \Hyperf\Utils\Filesystem\Filesystem::class;
-        $Waiter = class_exists(\Hyperf\Coroutine\Waiter::class)
-            ? \Hyperf\Coroutine\Waiter::class
-            : \Hyperf\Utils\Waiter::class;
-        $ApplicationContext = class_exists(\Hyperf\Context\ApplicationContext::class)
-            ? \Hyperf\Context\ApplicationContext::class
-            : \Hyperf\Utils\ApplicationContext::class;
-
         $container = Mockery::mock(Container::class);
 
         $container->shouldReceive('get')->with(HttpDispatcher::class)->andReturn(new HttpDispatcher($container));
         $container->shouldReceive('get')->with(ExceptionHandlerDispatcher::class)->andReturn(new ExceptionHandlerDispatcher($container));
         $container->shouldReceive('get')->with(ResponseEmitter::class)->andReturn(new ResponseEmitter(null));
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn($factory = new DispatcherFactory());
-        $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new $SimpleNormalizer());
+        $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SimpleNormalizer());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturn(new MethodDefinitionCollector());
         $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)->andReturn(false);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
@@ -127,7 +129,7 @@ class TestCase extends BaseTestCase
 
         $container->shouldReceive('get')->with(ServerFactory::class)->andReturn(new ServerFactory($container));
         $container->shouldReceive('get')->with(Router::class)->andReturn(new Router());
-        $container->shouldReceive('get')->with($Filesystem)->andReturn(new $Filesystem());
+        $container->shouldReceive('get')->with(Filesystem::class)->andReturn(new Filesystem());
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(false);
         $container->shouldReceive('get')->with(RequestInterface::class)->andReturn(new Request());
         $container->shouldReceive('get')->with(ResponseInterface::class)->andReturn(new Response());
@@ -137,12 +139,12 @@ class TestCase extends BaseTestCase
         $container->shouldReceive('get')->with(Cors::class)->andReturn($cors = new Cors($container));
         $container->shouldReceive('get')->with(CorsMiddleware::class)->andReturn(new CorsMiddleware($cors, $container));
         $container->shouldReceive('get')->with(AppExceptionHandler::class)->andReturn(new AppExceptionHandler());
-        $container->shouldReceive('make')->with(CoreMiddleware::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+        $container->shouldReceive('make')->with(CoreMiddleware::class, Mockery::any())->andReturnUsing(static function ($class, $args) {
             return new CoreMiddleware(...array_values($args));
         });
-        $container->shouldReceive('get')->with($Waiter)->andReturn(new $Waiter());
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
         $container->shouldReceive('has')->andReturn(true);
-        $ApplicationContext::setContainer($container);
+        ApplicationContext::setContainer($container);
 
         Router::init($factory);
         $this->addWebRoutes();
